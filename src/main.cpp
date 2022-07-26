@@ -52,7 +52,7 @@ typedef struct
   uint8_t PIN;
   uint32_t color;
   int occupied;
-  unsigned long last_changed;
+  int last_occupied;
   int8_t lastDirection;
 } slot_sensor;
 slot_sensor sensors[5];
@@ -143,13 +143,14 @@ void setup()
 
   SPIFFS.begin();
   audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
-  audio.setVolume(40);
+  audio.setVolume(10);
+  audio.connecttospeech("¡Hola Dani! Empezamos el juego.", "es");
 
-  sensors[0] = {SLOT1, green, FREE, 0, 0};
-  sensors[1] = {SLOT2, green, FREE, 0, 0};
-  sensors[2] = {SLOT3, green, FREE, 0, 0};
-  sensors[3] = {SLOT4, green, FREE, 0, 0};
-  sensors[4] = {SLOT5, green, FREE, 0, 0};
+  sensors[0] = {SLOT1, green, FREE, FREE, 0};
+  sensors[1] = {SLOT2, green, FREE, FREE, 0};
+  sensors[2] = {SLOT3, green, FREE, FREE, 0};
+  sensors[3] = {SLOT4, green, FREE, FREE, 0};
+  sensors[4] = {SLOT5, green, FREE, FREE, 0};
   pinMode(sensors[0].PIN, INPUT);
   pinMode(sensors[1].PIN, INPUT);
   pinMode(sensors[2].PIN, INPUT);
@@ -171,7 +172,6 @@ void setup()
 
 void showCharOnScreen(int c)
 {
-  WebSerial.println("Someone called me!");
   char cc = c + 49;
   display.clearDisplay();
   display.setCursor(20, 8);
@@ -185,7 +185,7 @@ int updateSensorsStruct()
   unsigned long current_millis = millis();
   int state_changed = -1;
 
-  if (current_millis >= sensors_lastRead + 1000)
+  if (current_millis >= sensors_lastRead + 250)
   {
     for (size_t i = 0; i < NUMPIXELS; i++)
     {
@@ -194,14 +194,15 @@ int updateSensorsStruct()
       {
         if (sensors[i].occupied == BUSY)
         {
-          WebSerial.println("OUT");
+          // WebSerial.println("OUT");
           sensors[i].lastDirection = OUT;
         }
         else
         {
-          WebSerial.println("IN");
+          // WebSerial.println("IN");
           sensors[i].lastDirection = IN;
         }
+        sensors[i].last_occupied = sensors[i].occupied;
         sensors[i].occupied = read;
         state_changed = i;
       }
@@ -219,17 +220,27 @@ void audio_eof_mp3(const char *info)
 
 void updateLEDsStruct(int changed_slot)
 {
-  if (sensors[changed_slot].color == green)
+  for (size_t i = 0; i < NUMPIXELS; i++)
   {
-    WebSerial.println("Was green, change to red");
-    sensors[changed_slot].color = red;
+    if (sensors[i].occupied != sensors[i].last_occupied)
+    {
+      // WebSerial.print("Updating slot ");
+      // WebSerial.println(i);
+      if (sensors[i].color == green)
+      {
+        // WebSerial.println("Was green, change to red");
+        sensors[i].color = red;
+      }
+      else
+      {
+        // WebSerial.println("Was red, change to green");
+        sensors[i].color = green;
+      }
+      sensors[i].last_occupied = sensors[i].occupied;
+      pixels.setPixelColor(i, sensors[i].color);
+    }
   }
-  else
-  {
-    WebSerial.println("Was red, change to green");
-    sensors[changed_slot].color = green;
-  }
-  pixels.setPixelColor(changed_slot, sensors[changed_slot].color);
+
   pixels.show();
 }
 
@@ -275,11 +286,11 @@ void gotoTextGame(int changed)
 
   else if (changed >= 0 && sensors[changed].lastDirection == IN)
   {
-    WebSerial.println("Rama1. ");
-    WebSerial.print(sensors[changed].lastDirection);
+    // WebSerial.println("Rama1. ");
+    // WebSerial.print(sensors[changed].lastDirection);
     if (changed_slot == go_to_slot)
     {
-      WebSerial.println("Bien!");
+      // WebSerial.println("Bien!");
 
       audio.connecttoFS(SPIFFS, "no_lang/correct.mp3");
 
@@ -288,17 +299,17 @@ void gotoTextGame(int changed)
     }
     else
     {
-      WebSerial.print("Mal! Has metido ");
-      WebSerial.print(changed_slot + 1);
-      WebSerial.print(" y esperaba ");
-      WebSerial.println(go_to_slot + 1);
+      // WebSerial.print("Mal! Has metido ");
+      // WebSerial.print(changed_slot + 1);
+      // WebSerial.print(" y esperaba ");
+      // WebSerial.println(go_to_slot + 1);
 
       audio.connecttoFS(SPIFFS, "no_lang/wrong.mp3");
     }
   }
   else if (changed >= 0 && sensors[changed].lastDirection == OUT)
   {
-    WebSerial.println("Ignoring this change, it's an OUT");
+    // WebSerial.println("Ignoring this change, it's an OUT");
   }
 }
 
