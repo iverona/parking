@@ -39,7 +39,6 @@ uint8_t file_index = 1;
 #define SLOT1 27
 
 // States
-// byte sensor_states[5];
 unsigned long sensors_lastRead = 0;
 
 // Struct TEST
@@ -72,8 +71,6 @@ unsigned long leds_lastUpdated = 0;
 #define I2C_SCL 13
 #define OLED_RESET -1 // GPIO0
 Adafruit_SSD1306 display(OLED_RESET);
-
-// char text_buffer[100];
 
 /* GAME LOGIC */
 #define GAME_STATE_NOT_STARTED 0
@@ -274,6 +271,9 @@ void gotoTextGame(int changed)
       } while (sensors[go_to_slot].color == red);
 
       showCharOnScreen(go_to_slot);
+      char buffer[100];
+      sprintf(buffer, "Ve al número %i", go_to_slot+1);
+      audio.connecttospeech(buffer, "es");
       game_state = GAME_STATE_WAITING;
     }
     else
