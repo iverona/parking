@@ -54,21 +54,33 @@ void setup()
   slots.begin();
 
   game.begin(&slots);
+  game.setLanguage(LANG_EN);
+}
+
+void audio_eof_speech(const char *info)
+{
+  WebSerial.println("I've stopped playing sound");
+  slots.is_playing_sound = false;
 }
 
 void loop()
 {
   slots.loop();
-  game.loop();
 
-  // if (DEBUG)
-  // {
-  //   unsigned long current_millis = millis();
+  if (!slots.is_playing_sound)
+  {
+    game.loop();
+  }
 
-  //   if (current_millis >= last_debug + 5000)
-  //   {
-  //     WebSerial.println("DEBUG");
-  //     last_debug = current_millis;
-  //   }
-  // }
+  if (DEBUG)
+  {
+    unsigned long current_millis = millis();
+
+    if (current_millis >= last_debug + 1000)
+    {
+      WebSerial.print("DEBUG. Is playing sound: ");
+      WebSerial.println(slots.is_playing_sound);
+      last_debug = current_millis;
+    }
+  }
 }

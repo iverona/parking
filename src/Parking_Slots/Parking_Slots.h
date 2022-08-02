@@ -58,20 +58,23 @@ public:
     void updateLEDsStruct();
     int freeSlots();
     void loop();
-    char* debug();
+    char *debug();
     void showCharOnScreen(int c);
+    void speak_go_to_number(uint8_t number, uint8_t language);
+    void play_wrong();
+    void play_right();
 
     slot_sensor sensors[NUMPIXELS];
     Audio audio;
-    Adafruit_SSD1306* display;
+    Adafruit_SSD1306 *display;
     const uint32_t green = Adafruit_NeoPixel().Color(20, 0, 0);
     const uint32_t red = Adafruit_NeoPixel().Color(0, 20, 0);
     const uint32_t blue = Adafruit_NeoPixel().Color(0, 0, 20);
-
+    bool is_playing_sound = false;
     int8_t changed;
+
 private:
     unsigned long _sensors_lastRead = 0;
-    Adafruit_NeoPixel* _pixels;
-
+    Adafruit_NeoPixel *_pixels;
 };
 #endif

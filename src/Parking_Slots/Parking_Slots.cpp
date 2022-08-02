@@ -1,9 +1,9 @@
 #include "Parking_Slots.h"
+#include "Slot_Game/Slot_Game.h"
 
 Parking_Slots::Parking_Slots()
 {
-    _pixels = new Adafruit_NeoPixel(NUMPIXELS, PIXEL_PIN, NEO_GRB + NEO_KHZ800);    
-    
+    _pixels = new Adafruit_NeoPixel(NUMPIXELS, PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 
     sensors[0] = {SLOT1, green, FREE, FREE, 0};
     sensors[1] = {SLOT2, green, FREE, FREE, 0};
@@ -51,8 +51,7 @@ void Parking_Slots::begin()
 
     SPIFFS.begin();
     audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
-    audio.setVolume(10);
-    audio.connecttospeech("¡Hola Dani! Empezamos el juego.", "es");
+    audio.setVolume(10);    
 
     Wire.begin(I2C_SDA, I2C_SCL);
     display = new Adafruit_SSD1306(OLED_RESET);
@@ -61,7 +60,6 @@ void Parking_Slots::begin()
     display->clearDisplay();
     display->setTextSize(6);
     display->setTextColor(WHITE);
-
 }
 
 // Returns -1 if no change or the changed slot number.
@@ -131,36 +129,60 @@ int Parking_Slots::freeSlots()
     return free_slots;
 }
 
-void Parking_Slots::loop()
-{
-    audio.loop();
-    changed = updateSensorsStruct();
-    if (changed >= 0)
-    {
-        updateLEDsStruct();
-    }
-}
-
 void Parking_Slots::showCharOnScreen(int c)
 {
-  char cc = c + 49;
-  display->clearDisplay();
-  display->setCursor(20, 8);
-  display->println(cc);
-  display->display();
+    char cc = c + 49;
+    display->clearDisplay();
+    display->setCursor(20, 8);
+    display->println(cc);
+    display->display();
 }
 
-// void audio_eof_mp3(const char *info)
-// {
-// }
+void Parking_Slots::speak_go_to_number(uint8_t number, uint8_t language)
+{
+    char buffer[20];
+    if (language == LANG_EN)
+    {
+        sprintf(buffer, "Go to number %i", number + 1);
+        audio.connecttospeech(buffer, "en");
+    }
+    else if (language == LANG_ES)
+    {
+        sprintf(buffer, "Ve al número %i", number + 1);
+        audio.connecttospeech(buffer, "es");
+    }
+
+    is_playing_sound = true;
+}
+
+void Parking_Slots::play_right()
+{
+    audio.connecttoFS(SPIFFS, "no_lang/correct.mp3");
+}
+
+void Parking_Slots::play_wrong()
+{
+    audio.connecttoFS(SPIFFS, "no_lang/wrong.mp3");
+}
 
 char *Parking_Slots::debug()
 {
-    char buffer[100];
+    // char buffer[100];
     char *output = (char *)malloc(100);
 
     sprintf(output, "Hola mundo desde la clase Parking_Slots");
     WebSerial.println("Webserial desde debug()");
 
     return output;
+}
+
+void Parking_Slots::loop()
+{
+    audio.loop();
+
+    changed = updateSensorsStruct();
+    if (changed >= 0)
+    {
+        updateLEDsStruct();
+    }
 }

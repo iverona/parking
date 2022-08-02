@@ -2,7 +2,7 @@
 
 void Numbers_Game::begin(Parking_Slots *sensors)
 {
-    _sensors = sensors;
+    _sensors = sensors;    
 }
 
 void Numbers_Game::loop()
@@ -24,10 +24,7 @@ void Numbers_Game::loop()
             } while (_sensors->sensors[go_to_slot].color == _sensors->red);
 
             _sensors->showCharOnScreen(go_to_slot);
-            char buffer[100];
-            sprintf(buffer, "Ve al número %i", go_to_slot + 1);
-            // WebSerial.println(buffer);
-            _sensors->audio.connecttospeech(buffer, "es");
+            _sensors->speak_go_to_number(go_to_slot, lang);
             game_state = GAME_STATE_WAITING;
         }
         else
@@ -44,7 +41,7 @@ void Numbers_Game::loop()
         {
             // WebSerial.println("Bien!");
 
-            _sensors->audio.connecttoFS(SPIFFS, "no_lang/correct.mp3");
+            _sensors->play_right();
 
             game_state = GAME_STATE_NOT_STARTED;
             num_wins++;
@@ -56,7 +53,7 @@ void Numbers_Game::loop()
             // WebSerial.print(" y esperaba ");
             // WebSerial.println(go_to_slot + 1);
 
-            _sensors->audio.connecttoFS(SPIFFS, "no_lang/wrong.mp3");
+            _sensors->play_wrong();
         }
     }
     else if (changed >= 0 && _sensors->sensors[changed].lastDirection == OUT)
