@@ -51,7 +51,7 @@ void Parking_Slots::begin()
 
     SPIFFS.begin();
     audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
-    audio.setVolume(10);    
+    audio.setVolume(10);
 
     Wire.begin(I2C_SDA, I2C_SCL);
     display = new Adafruit_SSD1306(OLED_RESET);
@@ -153,16 +153,30 @@ void Parking_Slots::speak_go_to_number(uint8_t number, uint8_t language)
     }
 
     is_playing_sound = true;
+    while (is_playing_sound)
+    {
+        audio.loop();
+    }
 }
 
 void Parking_Slots::play_right()
 {
     audio.connecttoFS(SPIFFS, "no_lang/correct.mp3");
+    is_playing_sound = true;
+    while (is_playing_sound)
+    {
+        audio.loop();
+    }
 }
 
 void Parking_Slots::play_wrong()
 {
     audio.connecttoFS(SPIFFS, "no_lang/wrong.mp3");
+    is_playing_sound = true;
+    while (is_playing_sound)
+    {
+        audio.loop();
+    }
 }
 
 char *Parking_Slots::debug()
@@ -178,7 +192,7 @@ char *Parking_Slots::debug()
 
 void Parking_Slots::loop()
 {
-    audio.loop();
+    // audio.loop();
 
     changed = updateSensorsStruct();
     if (changed >= 0)

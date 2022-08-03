@@ -59,18 +59,20 @@ void setup()
 
 void audio_eof_speech(const char *info)
 {
-  WebSerial.println("I've stopped playing sound");
+  delay(100);  
+  slots.is_playing_sound = false;
+}
+
+void audio_eof_mp3(const char *info)
+{
+  delay(100);
   slots.is_playing_sound = false;
 }
 
 void loop()
 {
   slots.loop();
-
-  if (!slots.is_playing_sound)
-  {
-    game.loop();
-  }
+  game.loop();
 
   if (DEBUG)
   {
