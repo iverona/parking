@@ -1,5 +1,6 @@
 #ifndef Parking_Slots_h
 #define Parking_Slots_h
+
 #include "Arduino.h"
 #include <Adafruit_NeoPixel.h>
 #include <Audio.h>
@@ -45,6 +46,7 @@ typedef struct
     int occupied;
     int last_occupied;
     int8_t lastDirection;
+    char current_char;
 } slot_sensor;
 
 class Parking_Slots
@@ -60,7 +62,9 @@ public:
     void loop();
     char *debug();
     void showCharOnScreen(int c);
-    void speak_go_to_number(uint8_t number, uint8_t language);
+    void showCharOnScreen(char c);
+    void blocking_tts_es(char *phrase);
+    void blocking_tts_en(char *phrase);
     void play_wrong();
     void play_right();
 

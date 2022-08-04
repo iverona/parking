@@ -1,11 +1,16 @@
-#include "Numbers_Game.h"
+#include "Letters_Game.h"
 
-void Numbers_Game::begin(Parking_Slots *sensors)
+void Letters_Game::begin(Parking_Slots *sensors)
 {
     _sensors = sensors;
+    _sensors->sensors[0].current_char = 'A';
+    _sensors->sensors[1].current_char = 'E';
+    _sensors->sensors[2].current_char = 'I';
+    _sensors->sensors[3].current_char = 'O';
+    _sensors->sensors[4].current_char = 'U';
 }
 
-void Numbers_Game::loop()
+void Letters_Game::loop()
 {
     int8_t changed = _sensors->changed;
     if (game_state == GAME_STATE_FINISHED)
@@ -17,15 +22,16 @@ void Numbers_Game::loop()
     {
         if (_sensors->freeSlots() > 0)
         {
-            // WebSerial.println("Game not started. Starting.");
             do
             {
                 go_to_slot = random(0, NUMPIXELS);
             } while (_sensors->sensors[go_to_slot].color == _sensors->red);
 
+            WebSerial.println(blind_mode);
+
             if (!blind_mode)
             {
-                _sensors->showCharOnScreen(go_to_slot);
+                _sensors->showCharOnScreen(_sensors->sensors[go_to_slot].current_char);
             }
 
             if (!no_sound_mode)
@@ -33,13 +39,15 @@ void Numbers_Game::loop()
                 char buffer[30];
                 if (language == 1)
                 {
-                    sprintf(buffer, "Ve al número %i", go_to_slot + 1);
+                    WebSerial.println("Lang ES");
+                    sprintf(buffer, "Ve a la letra %c", _sensors->sensors[go_to_slot].current_char);
                     _sensors->blocking_tts_es(buffer);
                 }
 
                 if (language == 2)
                 {
-                    sprintf(buffer, "Go to number %i", go_to_slot + 1);
+                    WebSerial.println("Lang EN");
+                    sprintf(buffer, "Go to letter %c", _sensors->sensors[go_to_slot].current_char);
                     _sensors->blocking_tts_en(buffer);
                 }
             }
@@ -58,8 +66,6 @@ void Numbers_Game::loop()
     {
         if (changed == go_to_slot)
         {
-            // WebSerial.println("Bien!");
-
             _sensors->play_right();
 
             game_state = GAME_STATE_NOT_STARTED;
@@ -67,11 +73,6 @@ void Numbers_Game::loop()
         }
         else
         {
-            // WebSerial.print("Mal! Has metido ");
-            // WebSerial.print(changed + 1);
-            // WebSerial.print(" y esperaba ");
-            // WebSerial.println(go_to_slot + 1);
-
             _sensors->play_wrong();
         }
     }

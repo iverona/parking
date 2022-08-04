@@ -7,6 +7,7 @@
 #include <config.h>
 #include "Parking_Slots/Parking_Slots.h"
 #include "Slot_Game/Numbers_Game.h"
+#include "Slot_Game/Letters_Game.h"
 
 /* WebSerial  & OTA */
 AsyncWebServer server(80);
@@ -20,7 +21,8 @@ Parking_Slots slots;
 unsigned long last_debug = 0;
 
 /* GAME LOGIC */
-Numbers_Game game;
+//Numbers_Game game;
+Letters_Game game;
 
 #define DEBUG 0
 
@@ -54,12 +56,15 @@ void setup()
   slots.begin();
 
   game.begin(&slots);
-  game.setLanguage(LANG_EN);
+
+  game.language = 1;
+  //game.blind_mode = true;
+  //game.no_sound_mode = true;
 }
 
 void audio_eof_speech(const char *info)
 {
-  delay(100);  
+  delay(100);
   slots.is_playing_sound = false;
 }
 

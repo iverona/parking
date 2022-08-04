@@ -138,20 +138,27 @@ void Parking_Slots::showCharOnScreen(int c)
     display->display();
 }
 
-void Parking_Slots::speak_go_to_number(uint8_t number, uint8_t language)
-{
-    char buffer[20];
-    if (language == LANG_EN)
-    {
-        sprintf(buffer, "Go to number %i", number + 1);
-        audio.connecttospeech(buffer, "en");
-    }
-    else if (language == LANG_ES)
-    {
-        sprintf(buffer, "Ve al número %i", number + 1);
-        audio.connecttospeech(buffer, "es");
-    }
+void Parking_Slots::showCharOnScreen(char c)
+{    
+    display->clearDisplay();
+    display->setCursor(20, 8);
+    display->println(c);
+    display->display();
+}
 
+void Parking_Slots::blocking_tts_es(char *phrase)
+{
+    audio.connecttospeech(phrase, "es");
+    is_playing_sound = true;
+    while (is_playing_sound)
+    {
+        audio.loop();
+    }
+}
+
+void Parking_Slots::blocking_tts_en(char *phrase)
+{
+    audio.connecttospeech(phrase, "en");
     is_playing_sound = true;
     while (is_playing_sound)
     {
