@@ -20,6 +20,7 @@ public:
     int language;
     bool blind_mode = false;
     bool no_sound_mode = false;
+    bool guidance_mode = false;
 
 protected:
     Parking_Slots *_sensors;

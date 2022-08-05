@@ -27,8 +27,6 @@ void Letters_Game::loop()
                 go_to_slot = random(0, NUMPIXELS);
             } while (_sensors->sensors[go_to_slot].color == _sensors->red);
 
-            WebSerial.println(blind_mode);
-
             if (!blind_mode)
             {
                 _sensors->showCharOnScreen(_sensors->sensors[go_to_slot].current_char);
@@ -39,14 +37,12 @@ void Letters_Game::loop()
                 char buffer[30];
                 if (language == 1)
                 {
-                    WebSerial.println("Lang ES");
                     sprintf(buffer, "Ve a la letra %c", _sensors->sensors[go_to_slot].current_char);
                     _sensors->blocking_tts_es(buffer);
                 }
 
                 if (language == 2)
                 {
-                    WebSerial.println("Lang EN");
                     sprintf(buffer, "Go to letter %c", _sensors->sensors[go_to_slot].current_char);
                     _sensors->blocking_tts_en(buffer);
                 }
@@ -73,7 +69,25 @@ void Letters_Game::loop()
         }
         else
         {
-            _sensors->play_wrong();
+            if (guidance_mode)
+            {
+                char buffer[30];
+                if (language == 1)
+                {
+                    sprintf(buffer, "¡No! Esta es la %c", _sensors->sensors[changed].current_char);
+                    _sensors->blocking_tts_es(buffer);
+                }
+
+                if (language == 2)
+                {
+                    sprintf(buffer, "¡No! This is %c", _sensors->sensors[changed].current_char);
+                    _sensors->blocking_tts_en(buffer);
+                }
+            }
+            else
+            {
+                _sensors->play_wrong();
+            }
         }
     }
     else if (changed >= 0 && _sensors->sensors[changed].lastDirection == OUT)
