@@ -30,11 +30,13 @@ void Parking_Slots::scanSlots()
         {
             sensors[i].color = green;
             sensors[i].occupied = FREE;
+            sensors[i].last_occupied = FREE;
         }
         else
         {
             sensors[i].color = red;
             sensors[i].occupied = BUSY;
+            sensors[i].last_occupied = BUSY;
         }
     }
 }
@@ -51,7 +53,7 @@ void Parking_Slots::begin()
 
     SPIFFS.begin();
     audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
-    audio.setVolume(10);
+    audio.setVolume(7);
 
     Wire.begin(I2C_SDA, I2C_SCL);
     display = new Adafruit_SSD1306(OLED_RESET);
@@ -139,7 +141,7 @@ void Parking_Slots::showCharOnScreen(int c)
 }
 
 void Parking_Slots::showCharOnScreen(char c)
-{    
+{
     display->clearDisplay();
     display->setCursor(20, 8);
     display->println(c);
