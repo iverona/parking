@@ -10,7 +10,14 @@ void Numbers_Game::loop()
     int8_t changed = _sensors->changed;
     if (game_state == GAME_STATE_FINISHED)
     {
-        return;
+        if (_sensors->freeSlots() > 4)
+        {
+            game_state = GAME_STATE_NOT_STARTED;
+        }
+        else
+        {
+            return;
+        }
     }
 
     if (game_state == GAME_STATE_NOT_STARTED)
@@ -48,7 +55,16 @@ void Numbers_Game::loop()
         }
         else
         {
-            // WebSerial.println("No more free slots. You WIN!!");
+            WebSerial.println("No more free slots. You WIN!!");
+            if (language == 1)
+            {
+                _sensors->blocking_tts_es("¡Has ganado!");
+            }
+
+            if (language == 2)
+            {
+                _sensors->blocking_tts_en("You win!");
+            }
             game_state = GAME_STATE_FINISHED;
             return;
         }
