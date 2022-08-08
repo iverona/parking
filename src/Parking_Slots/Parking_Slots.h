@@ -63,8 +63,8 @@ public:
     char *debug();
     void showCharOnScreen(int c);
     void showCharOnScreen(char c);
-    void blocking_tts_es(char *phrase);
-    void blocking_tts_en(char *phrase);
+    void blocking_tts_es(const char *phrase);
+    void blocking_tts_en(const char *phrase);
     void play_wrong();
     void play_right();
 

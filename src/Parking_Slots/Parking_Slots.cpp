@@ -148,7 +148,7 @@ void Parking_Slots::showCharOnScreen(char c)
     display->display();
 }
 
-void Parking_Slots::blocking_tts_es(char *phrase)
+void Parking_Slots::blocking_tts_es(const char *phrase)
 {
     audio.connecttospeech(phrase, "es");
     is_playing_sound = true;
@@ -158,7 +158,7 @@ void Parking_Slots::blocking_tts_es(char *phrase)
     }
 }
 
-void Parking_Slots::blocking_tts_en(char *phrase)
+void Parking_Slots::blocking_tts_en(const char *phrase)
 {
     audio.connecttospeech(phrase, "en");
     is_playing_sound = true;

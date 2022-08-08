@@ -55,15 +55,16 @@ void Numbers_Game::loop()
         }
         else
         {
-            WebSerial.println("No more free slots. You WIN!!");
             if (language == 1)
             {
                 _sensors->blocking_tts_es("¡Has ganado!");
+                _sensors->blocking_tts_es("Por favor saca todos los coches para empezar otra vez.");
             }
 
             if (language == 2)
             {
                 _sensors->blocking_tts_en("You win!");
+                _sensors->blocking_tts_en("Please empty all slots to restart the game.");
             }
             game_state = GAME_STATE_FINISHED;
             return;
@@ -74,8 +75,6 @@ void Numbers_Game::loop()
     {
         if (changed == go_to_slot)
         {
-            // WebSerial.println("Bien!");
-
             _sensors->play_right();
 
             game_state = GAME_STATE_NOT_STARTED;
@@ -83,11 +82,6 @@ void Numbers_Game::loop()
         }
         else
         {
-            // WebSerial.print("Mal! Has metido ");
-            // WebSerial.print(changed + 1);
-            // WebSerial.print(" y esperaba ");
-            // WebSerial.println(go_to_slot + 1);
-
             _sensors->play_wrong();
         }
     }
