@@ -6,4 +6,3 @@
 .vscode/ipch
 include/config.h
 data/
-speech-generator/
