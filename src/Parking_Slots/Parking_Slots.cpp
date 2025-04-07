@@ -53,7 +53,7 @@ void Parking_Slots::begin()
 
     SPIFFS.begin();
     audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
-    audio.setVolume(7);
+    audio.setVolume(20);
 
     Wire.begin(I2C_SDA, I2C_SCL);
     display = new Adafruit_SSD1306(OLED_RESET);
@@ -197,6 +197,14 @@ char *Parking_Slots::debug()
     WebSerial.println("Webserial desde debug()");
 
     return output;
+}
+
+void Parking_Slots::debug_sensors()
+{
+    for(int i = 0; i < NUMPIXELS; i++) {
+        WebSerial.println(sensors[i].occupied);
+        Serial.println(sensors[i].occupied);
+    }
 }
 
 void Parking_Slots::loop()

@@ -61,6 +61,7 @@ public:
     int freeSlots();
     void loop();
     char *debug();
+    void debug_sensors();
     void showCharOnScreen(int c);
     void showCharOnScreen(char c);
     void blocking_tts_es(const char *phrase);
